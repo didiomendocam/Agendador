@@ -1,11 +1,12 @@
 package com.cvc.agendador.model;
 
+import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -18,11 +19,11 @@ public class AccountTranfer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long acocountTransfer;
+    private Long Id;
     private Long accountNumberSource;
     private Long accountNumberTarget;
     private BigDecimal transferAmount;
-    private LocalDateTime transferDate;
+    private LocalDateTime transferSchedule;
 
     @OneToOne
     @JoinColumn(name = "rate_id")
