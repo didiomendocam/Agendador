@@ -6,11 +6,13 @@ import com.cvc.agendador.repository.AccountTransferRepository;
 import com.cvc.agendador.repository.RateRepository;
 import com.cvc.agendador.utils.Calcule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class AccountTransferService {
 
     @Autowired
@@ -19,20 +21,17 @@ public class AccountTransferService {
     @Autowired
     RateRepository rateRepository;
 
-    public List<AccountTranfer> accountTransfer(@RequestBody AccountTranfer accountTranferSource, AccountTranfer accountTranferTarget) {
+    public AccountTranfer accountTransfer(@RequestBody AccountTranfer accountTranfer) {
         List<AccountTranfer> accountTranfers = null;
 
-        Long days = Calcule.amountDays(accountTranferSource.getTransferSchedule());
-        Optional<Rate> rate = rateRepository.findById(1L);
-        Long returnValue = Calcule.executeCalcTransfer(accountTranferSource, days, rate.get().getRateAmountDays(), rate.get().getRateValuePercent());
+        Long days = Calcule.amountDays(accountTranfer.getTransferSchedule());
+        Optional<Rate> rate = Optional.ofNullable(rateRepository.findByRangeRateDays(days.longValue()));
+        Long returnValue = Calcule.executeCalcTransfer(accountTranfer, days, rate.get().getRateAmountDays(), rate.get().getRateValuePercent());
 
-        accountTransferRepository.save(accountTranferSource);
-        accountTransferRepository.save(accountTranferTarget);
+        accountTranfer.setTaxa(returnValue);
+        accountTransferRepository.save(accountTranfer);
 
-        accountTranfers.add(accountTranferSource);
-        accountTranfers.add(accountTranferTarget);
-
-        return accountTranfers;
+        return accountTranfer;
     }
 
     public Optional<AccountTranfer> getAccountTranferById(Long accountTransferID) {

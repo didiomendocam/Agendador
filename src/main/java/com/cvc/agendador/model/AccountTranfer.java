@@ -24,6 +24,7 @@ public class AccountTranfer {
     private Long accountNumberTarget;
     private BigDecimal transferAmount;
     private LocalDateTime transferSchedule;
+    private Long taxa;
 
     @OneToOne
     @JoinColumn(name = "rate_id")
